@@ -1,0 +1,56 @@
+# Copyright (c) 2021 NVIDIA Corporation.  All rights reserved. 
+
+Bootstrap: docker
+#FROM: nvcr.io/nvidia/nvhpc:20.11-devel-cuda_multi-ubuntu20.04
+FROM:  nvidia/cuda:11.2.2-devel-ubuntu20.04
+
+%environment
+    export XDG_RUNTIME_DIR=
+    export PATH="$PATH:/usr/local/bin:/usr/bin"
+    export PATH=/opt/nvidia/nsight-systems/2020.5.1/bin:/opt/nvidia/nsight-compute/2020.2.1:/bin:/usr/local/cuda/bin$PATH
+    export LD_LIBRARY_PATH="/usr/include/python3.8:/usr/local/lib:/usr/local/lib/python3.8/dist-packages:/usr/local/cuda/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"
+    
+
+%post
+    build_tmp=$(mktemp -d) && cd ${build_tmp}
+
+    apt-get -y update
+    apt-get -y dist-upgrade 
+    DEBIAN_FRONTEND=noninteractive apt-get -yq install --no-install-recommends python3-dev \
+	    m4 vim-nox emacs-nox nano zip \
+ 	    python3-pip python3-setuptools nginx zip make build-essential libtbb-dev
+    rm -rf /var/lib/apt/cache/* 
+
+    pip3 install --no-cache-dir -U install setuptools pip
+    pip3 install gdown
+    pip3 install --no-cache-dir jupyter
+    pip3 install --no-cache-dir "cupy-cuda112==8.6.0" \
+    numba numpy scipy
+    pip3 install --upgrade MDAnalysis
+
+    apt-get install --no-install-recommends -y build-essential 
+
+    python3 /labs/nways_MD/English/Python/source_code/dataset.py
+
+
+# NVIDIA nsight-systems-2020.5.1 ,nsight-compute-2
+    apt-get update -y   
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends apt-transport-https ca-certificates gnupg wget
+    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys F60F4B3D7FA2AF80
+    echo "deb https://developer.download.nvidia.com/devtools/repos/ubuntu2004/amd64/ /" >> /etc/apt/sources.list.d/nsight.list 
+    apt-get update -y 
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends nsight-systems-2020.5.1 nsight-compute-2020.2.1 
+    apt-get install --no-install-recommends -y build-essential
+    
+    
+    
+    cd /
+    rm -rf ${build_tmp}
+
+%files
+    nways_labs/ /labs
+%runscript
+    "$@"
+
+%labels
+    AUTHOR Tosin
