@@ -28,11 +28,11 @@ import gdown
 import os
 
 ## TC TL MODEL  
-url = 'https://drive.google.com/uc?id=1Rb9gKSDdLC8y8yMcDqeOHAGj9qA0mDLJ&export=download'
+url = 'https://drive.google.com/u/0/uc?export=download&confirm=jDXw&id=1Rb9gKSDdLC8y8yMcDqeOHAGj9qA0mDLJ'
 output = '/workspace/python/jupyter_notebook/Tropical_Cyclone_Intensity_Estimation/trained_16.h5'
 gdown.download(url, output, quiet=False,proxy=None)
 ## TC Dataset  
-url = 'https://drive.google.com/uc?id=1vMXpbWx_-DO8CNkG68eErzcREvfouT5d&export=download'
+url = 'https://drive.google.com/u/0/uc?export=download&confirm=lR5L&id=1vMXpbWx_-DO8CNkG68eErzcREvfouT5d'
 output = '/workspace/python/jupyter_notebook/Tropical_Cyclone_Intensity_Estimation/dataset.zip'
 gdown.cached_download(url, output, quiet=False,proxy=None,postprocess=gdown.extractall)
 
